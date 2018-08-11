@@ -15,6 +15,7 @@ class ViewController: UIViewController ,UITextFieldDelegate{
     var mList = [TaskManager]()
     var task : TaskManager!
     var isEdit : Bool = false
+    var isShow : Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,14 +73,18 @@ class ViewController: UIViewController ,UITextFieldDelegate{
         textFieldInput.resignFirstResponder()
     }
     
+    
     @objc func keyboardWillShow(notification: NSNotification) {
         // let duration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]
         // print("duration",duration)
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight : Int = Int(keyboardSize.height)
-            print("keyboardWillShow",keyboardHeight)
             if let height = UserDefaults.standard.value(forKey: "keyboardHeight") as? (Int) {
-                moveTextField(textFieldInput, moveDistance: -height as Int, moveDuration: 0.43, up: true)
+                if(!isShow){
+                      moveTextField(textFieldInput, moveDistance: -height as Int, moveDuration: 0.43, up:true)
+                    isShow = true
+                }
+
             }else{
                 UserDefaults.standard.set(keyboardHeight, forKey: "keyboardHeight")
                 moveTextField(textFieldInput, moveDistance: -keyboardHeight, moveDuration: 0.43, up: true)
@@ -89,6 +94,7 @@ class ViewController: UIViewController ,UITextFieldDelegate{
     
     @objc func keyboardWillHide(notification: NSNotification){
         if let height = UserDefaults.standard.value(forKey: "keyboardHeight") as? (Int) {
+            isShow = false
             moveTextField(textFieldInput, moveDistance: -height as Int, moveDuration: 0.25, up: false)
         }
     }
